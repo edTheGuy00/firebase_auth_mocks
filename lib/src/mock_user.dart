@@ -13,6 +13,7 @@ class MockUser with EquatableMixin implements User {
   final List<UserInfo> _providerData;
   final String? _refreshToken;
   final UserMetadata? _metadata;
+  String? _idToken;
 
   MockUser({
     bool isAnonymous = false,
@@ -25,6 +26,7 @@ class MockUser with EquatableMixin implements User {
     List<UserInfo>? providerData,
     String? refreshToken,
     UserMetadata? metadata,
+    String customIdToken = 'fake_token';
   })  : _isAnonymous = isAnonymous,
         _isEmailVerified = isEmailVerified,
         _uid = uid,
@@ -34,7 +36,8 @@ class MockUser with EquatableMixin implements User {
         _photoURL = photoURL,
         _providerData = providerData ?? [],
         _refreshToken = refreshToken,
-        _metadata = metadata;
+        _metadata = metadata,
+        _idToken = customIdToken;
 
   FirebaseAuthException? _exception;
 
@@ -73,8 +76,11 @@ class MockUser with EquatableMixin implements User {
   String? get refreshToken => _refreshToken;
 
   @override
-  Future<String> getIdToken([bool forceRefresh = false]) async {
-    return Future.value('fake_token');
+  Future<String> getIdToken([bool forceRefresh = false, String refreshedToken = 'fake_refresh_token']) async {
+    if (forceRefresh) {
+      _idToken = refreshedToken;
+    }
+    return Future.value(_idToken);
   }
 
   @override
